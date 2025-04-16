@@ -85,6 +85,22 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/users/:email',verifyToken, async(req,res)=>{
+      const email = req.params.email 
+      const query = {email}
+      const user = await usersCollection.findOne(query)
+      if(!user || user?.status === 'requested') return res.status(400).send("You have already requested , wait for some times")
+      
+    const updateDoc = {
+      $inc:{
+        status: 'request'
+      }
+    }
+    const result = await usersCollection.updateOne(query,updateDoc)
+    res.send(result)
+
+    })
+
  // Logout
     app.get('/logout', async (req, res) => {
       try {
