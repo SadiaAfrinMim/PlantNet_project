@@ -142,13 +142,15 @@ async function run() {
       const id = req.params.id 
       const {quantityToUpdate,status} = req.body
       const filter = {_id: new ObjectId(id)}
-      const updateInfo={
+     let updateInfo={
         $inc:{quantity: -quantityToUpdate}
       }
-      if(status === 'increse'){
-        updateInfo =
-        {$inc:{quantity: quantityToUpdate}}
-      }
+      if (status === 'increase') {
+        updateInfo = {
+            $inc: { quantity: quantityToUpdate },
+        };
+    }
+    
       const result = await plantCollection.updateOne(filter,updateInfo)
       res.send(result)
     })
