@@ -4,6 +4,10 @@ import useAuth from '../../hooks/useAuth'
 import { toast } from 'react-hot-toast'
 import { TbFidgetSpinner } from 'react-icons/tb'
 
+import { imageUpload } from '../../API/utils'
+import axios from 'axios'
+
+
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth()
   const navigate = useNavigate()
@@ -14,6 +18,14 @@ const SignUp = () => {
     const name = form.name.value
     const email = form.email.value
     const password = form.password.value
+    const image = form.image.files[0]
+    // send image data to imagebb
+    const photoURL = await imageUpload(image)
+
+
+
+
+
 
     try {
       //2. User Registration
@@ -22,9 +34,17 @@ const SignUp = () => {
       //3. Save username & profile photo
       await updateUserProfile(
         name,
-        'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c'
+        photoURL
       )
       console.log(result)
+      await axios.post(`${import.meta.env.VITE_API_URL}/users/${email}`, {
+        name: name,
+        image: photoURL,
+        email: email,
+        
+      }
+
+      )
 
       navigate('/')
       toast.success('Signup Successful')
